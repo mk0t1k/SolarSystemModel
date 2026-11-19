@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Button from 'primevue/button'
+import SelectButton from 'primevue/selectbutton'
 import type { ViewMode } from '../core/SolarScene'
 
 interface Props {
@@ -15,66 +17,79 @@ const emit = defineEmits<{
   (e: 'changeViewMode', mode: ViewMode): void
 }>()
 
-const speedOptions = [0.25, 1, 2, 10, 50]
+const speedOptions = [
+  { label: '0.25x', value: 0.25 },
+  { label: '1x', value: 1 },
+  { label: '2x', value: 2 },
+  { label: '10x', value: 10 },
+  { label: '50x', value: 50 }
+]
+
+const viewModeOptions = [
+  { label: 'Визуальный', value: 'visual' as ViewMode },
+  { label: 'Реалистичный', value: 'realistic' as ViewMode }
+]
+
+const onSpeedChange = (val: number | null) => {
+  if (val !== null && val !== undefined) {
+    emit('changeSpeed', val)
+  }
+}
+
+const onViewModeChange = (val: ViewMode | null) => {
+  if (val) {
+    emit('changeViewMode', val)
+  }
+}
 </script>
 
 <template>
-  <div class="time-controls-panel">
+  <div class="time-controls-panel glass-panel">
     <!-- Play / Pause Button -->
     <div class="section-group">
-      <button
-        type="button"
-        class="sci-fi-btn play-btn"
-        :class="{ active: isPlaying }"
+      <Button
+        :icon="isPlaying ? 'pi pi-pause' : 'pi pi-play'"
+        :label="isPlaying ? 'Пауза' : 'Старт'"
+        severity="secondary"
+        size="small"
+        class="play-btn"
+        :class="{ 'btn-playing': isPlaying }"
         @click="emit('togglePlay')"
-      >
-        <span class="btn-icon">{{ isPlaying ? '⏸' : '▶' }}</span>
-        <span class="btn-text">{{ isPlaying ? 'Пауза' : 'Старт' }}</span>
-      </button>
+      />
     </div>
 
     <div class="divider"></div>
 
-    <!-- Speed Selector -->
+    <!-- Speed Selector using PrimeVue SelectButton -->
     <div class="section-group speed-group">
       <span class="group-label">Скорость:</span>
-      <div class="buttons-row">
-        <button
-          v-for="spd in speedOptions"
-          :key="spd"
-          type="button"
-          class="sci-fi-pill"
-          :class="{ active: timeSpeed === spd }"
-          @click="emit('changeSpeed', spd)"
-        >
-          {{ spd }}x
-        </button>
-      </div>
+      <SelectButton
+        :model-value="timeSpeed"
+        :options="speedOptions"
+        option-label="label"
+        option-value="value"
+        :allow-empty="false"
+        size="small"
+        class="compact-selectbutton"
+        @update:model-value="onSpeedChange"
+      />
     </div>
 
     <div class="divider"></div>
 
-    <!-- Scale Mode Toggle -->
+    <!-- Scale Mode Toggle using PrimeVue SelectButton -->
     <div class="section-group mode-group">
       <span class="group-label">Масштаб:</span>
-      <div class="buttons-row">
-        <button
-          type="button"
-          class="sci-fi-pill"
-          :class="{ active: viewMode === 'visual' }"
-          @click="emit('changeViewMode', 'visual')"
-        >
-          Визуальный
-        </button>
-        <button
-          type="button"
-          class="sci-fi-pill"
-          :class="{ active: viewMode === 'realistic' }"
-          @click="emit('changeViewMode', 'realistic')"
-        >
-          Реалистичный
-        </button>
-      </div>
+      <SelectButton
+        :model-value="viewMode"
+        :options="viewModeOptions"
+        option-label="label"
+        option-value="value"
+        :allow-empty="false"
+        size="small"
+        class="compact-selectbutton"
+        @update:model-value="onViewModeChange"
+      />
     </div>
   </div>
 </template>
@@ -87,14 +102,9 @@ const speedOptions = [0.25, 1, 2, 10, 50]
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--spacing-md);
   padding: 8px 16px;
-  background: rgba(13, 20, 36, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(80, 140, 240, 0.35);
-  border-radius: 14px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(60, 120, 220, 0.15);
+  border-radius: var(--radius-lg);
   z-index: 15;
   user-select: none;
 }
@@ -102,81 +112,38 @@ const speedOptions = [0.25, 1, 2, 10, 50]
 .divider {
   width: 1px;
   height: 24px;
-  background: rgba(80, 140, 240, 0.25);
+  background: var(--space-surface-panel-border);
 }
 
 .section-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .group-label {
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 11px;
-  color: #8b949e;
+  color: var(--space-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.buttons-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.sci-fi-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  font-family: var(--mono, monospace);
+.play-btn {
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: #e6edf3;
-  background: rgba(40, 50, 75, 0.5);
-  border: 1px solid rgba(100, 160, 255, 0.35);
-  border-radius: 8px;
-  cursor: pointer;
   transition: all 0.2s ease-in-out;
 }
 
-.sci-fi-btn:hover {
-  background: rgba(60, 90, 140, 0.6);
-  border-color: #00ffcc;
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
-  color: #ffffff;
+.btn-playing {
+  border-color: var(--space-accent-cyan-border) !important;
+  color: var(--space-accent-cyan) !important;
 }
 
-.sci-fi-btn.active {
-  border-color: rgba(0, 255, 204, 0.7);
-}
-
-.btn-icon {
-  font-size: 11px;
-}
-
-.sci-fi-pill {
-  padding: 5px 10px;
-  font-family: var(--mono, monospace);
+:deep(.compact-selectbutton .p-togglebutton) {
+  font-family: var(--font-mono);
   font-size: 11.5px;
-  color: #8b949e;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid transparent;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.sci-fi-pill:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.sci-fi-pill.active {
-  color: #00ffcc;
-  background: rgba(0, 255, 204, 0.12);
-  border-color: rgba(0, 255, 204, 0.4);
-  box-shadow: 0 0 8px rgba(0, 255, 204, 0.2);
+  padding: 4px 10px;
 }
 
 @media (max-width: 768px) {

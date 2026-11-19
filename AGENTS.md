@@ -6,6 +6,7 @@
 
 ## 1. Навигация и Контракты
 - **Спецификация требований и фич:** `docs/requirements.md`
+- **Спецификация планетарных событий:** `spec/planetary-events-ui.md`
 - **Перед изменением кода прочитай** `docs/style-guide.md`
 - **Команда полной валидации проекта:** `sh scripts/check.sh`
 - **Тестовый раннер:** `npm run test` (Vitest / Playwright)
@@ -20,7 +21,8 @@
 - **Фреймворк:** Vue 3 (Composition API, `<script setup>`, TypeScript)
 - **3D Графика:** Three.js (WebGL-рендерер, OrbitControls)
 - **Сборщик:** Vite
-- **Стили:** Scoped CSS / CSS-переменные (минималистичный Sci-Fi UI)
+- **UI и Стили:** PrimeVue (тема Aura в тёмном режиме) + общие дизайн-токены в `src/style.css`.
+  > **Строгое правило UI:** Запрещено создавать кастомные `<button>`, `<input>`, `<select>` и модальные окна — переиспользуй готовые компоненты PrimeVue (`Button`, `InputText`, `InputNumber`, `Select`, `Dialog`, `Card`, `Message`, `Skeleton`, `SelectButton`).
 - **Тестирование:** Vitest (математика орбит, данные), Playwright (E2E рендер холста)
 
 ---
@@ -31,10 +33,13 @@
 solar-system/
 ├── docs/
 │   └── requirements.md         # Детальный контракт требований (Фичи А и Б)
+├── spec/
+│   └── planetary-events-ui.md  # Спецификация UI поиска и визуализации планетарных событий
 ├── scripts/
 │   ├── check.sh                # Единый раннер проверок (типы, линт, билд, тесты)
 │   └── test_canvas.mjs         # E2E скрипт проверки инициализации WebGL
 ├── src/
+│   ├── api/                    # API-клиенты и сервисы работы с данными
 │   ├── data/
 │   │   └── celestialBodies.ts  # Характеристики планет (масштабы, периоды, радиусы)
 │   ├── core/

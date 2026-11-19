@@ -1,5 +1,72 @@
-# Vue 3 + TypeScript + Vite
+# Solar System 3D — Интерактивная 3D-модель Солнечной системы
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Интерактивная веб-модель Солнечной системы на **Vue 3**, **Three.js** и **PrimeVue**, симулирующая орбитальное движение планет с возможностью исследования каждого небесного тела, поиска астрономических явлений и перемотки времени в реальном времени.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+## 🚀 Стек технологий
+
+- **Фреймворк:** Vue 3 (Composition API, `<script setup>`, TypeScript)
+- **3D Графика:** Three.js (WebGL-рендерер, OrbitControls, Raycaster)
+- **UI и Стили:** PrimeVue v4 (тема Aura в тёмном режиме Dark Sci-Fi) + дизайн-токены в `src/style.css`
+- **Сборщик:** Vite
+- **Тестирование:** Vitest (математика орбит, сервисы, компоненты), Playwright (E2E-тестирование взаимодействия и WebGL)
+
+---
+
+## 🛠️ Установка и запуск
+
+### 1. Установка зависимостей
+```bash
+npm install
+```
+
+### 2. Запуск локального сервера разработки
+```bash
+npm run dev
+```
+Приложение будет доступно по адресу `http://localhost:5173`.
+
+### 3. Проверка типов TypeScript
+```bash
+npm run typecheck
+```
+
+### 4. Проверка линтером (ESLint)
+```bash
+npm run lint
+```
+
+### 5. Сборка для продакшна
+```bash
+npm run build
+```
+
+---
+
+## 🧪 Тестирование
+
+### Запуск модульных и компонентных тестов (Vitest)
+```bash
+npm run test
+```
+
+### Запуск сквозных E2E-тестов (Playwright)
+```bash
+npm run test:e2e
+```
+
+### Полная валидация проекта (типы, линт, сборка, тесты)
+```bash
+npm run check
+# или
+sh scripts/check.sh
+```
+
+---
+
+## 🪐 Основной функционал
+
+- **3D-симуляция орбит:** Точный расчёт круговых/эллиптических траекторий планет, плавное вращение и масштабирование сцены.
+- **Два режима масштабирования:** Визуальный (для удобного наблюдения всех планет) и Реалистичный.
+- **Информационные карточки:** Подробные данные по планетам (радиус, масса, дистанция от Солнца, интересные факты) с возможностью фокусировки камеры.
+- **Поиск планетарных событий:** Панель расчёта соединений, противостояний и парадов планет с прогнозированием до 3650 дней и кнопкой мгновенной перемотки времени на 3D-сцене («Показать на орбите»).
+
