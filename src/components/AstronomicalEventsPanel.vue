@@ -212,6 +212,7 @@ onUnmounted(() => {
         <h2 id="planner-panel-heading" class="panel-title">Планетарные события</h2>
       </div>
       <Button
+        type="button"
         icon="pi pi-times"
         text
         rounded
@@ -365,6 +366,7 @@ onUnmounted(() => {
             </template>
             <template #footer>
               <Button
+                type="button"
                 label="Показать на орбите"
                 icon="pi pi-fast-forward"
                 class="jump-to-orbit-btn"
@@ -401,6 +403,7 @@ onUnmounted(() => {
               </span>
               <div class="error-action-row">
                 <Button
+                  type="button"
                   label="Повторить попытку"
                   icon="pi pi-refresh"
                   size="small"

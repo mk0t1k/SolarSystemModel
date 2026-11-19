@@ -52,12 +52,12 @@ const handleHover = (payload: HoverEventPayload) => {
       y: payload.screenY
     }
   } else {
-    tooltipData.value = false ? tooltipData.value : {
-      visible: false,
-      name: '',
-      russianName: '',
-      x: 0,
-      y: 0
+    tooltipData.value = { 
+      visible: false, 
+      name: '', 
+      russianName: '', 
+      x: 0, 
+      y: 0 
     }
   }
 }
