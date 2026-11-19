@@ -14,7 +14,10 @@
     "check": "sh scripts/check.sh"
   },
   "dependencies": {
+    "@primeuix/themes": "^1.2.5",
     "@types/three": "^0.186.0",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.5.5",
     "three": "^0.186.1",
     "vue": "^3.5.42"
   },

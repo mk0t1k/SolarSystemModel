@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, shallowRef, computed, onMounted, onBeforeUnmount } from 'vue'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
 import { SolarScene, type ViewMode } from '../core/SolarScene'
 import { PLANETS_DATA, SUN_DATA, type CelestialBodyData } from '../data/celestialBodies'
 import { filterCelestialBodies } from '../utils/celestialFilter'
@@ -50,7 +52,13 @@ const handleHover = (payload: HoverEventPayload) => {
       y: payload.screenY
     }
   } else {
-    tooltipData.value.visible = false
+    tooltipData.value = false ? tooltipData.value : {
+      visible: false,
+      name: '',
+      russianName: '',
+      x: 0,
+      y: 0
+    }
   }
 }
 
@@ -144,47 +152,49 @@ onBeforeUnmount(() => {
 
     <!-- UI Overlay: Top Brand Bar -->
     <header class="top-brand-bar">
-      <div class="brand-tag">
+      <div class="brand-tag glass-panel">
         <span class="pulse-indicator"></span>
         <span class="brand-title">SOLAR SYSTEM 3D</span>
       </div>
 
       <!-- Search & Nav for celestial bodies -->
       <div class="nav-container">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input
+        <div class="search-box glass-panel">
+          <i class="pi pi-search search-icon"></i>
+          <InputText
             v-model="searchQuery"
             type="text"
+            size="small"
             class="search-input"
             placeholder="Поиск планеты / Search..."
             @keydown="handleSearchKeydown"
           />
-          <button
+          <Button
             v-if="searchQuery"
-            type="button"
+            icon="pi pi-times"
+            text
+            rounded
+            size="small"
             class="clear-search-btn"
             title="Очистить"
             @click="clearSearch"
-          >
-            ✕
-          </button>
+          />
         </div>
 
-        <nav class="quick-nav">
-          <button
+        <nav class="quick-nav glass-panel">
+          <Button
             v-for="body in filteredBodies"
             :key="body.id"
-            type="button"
+            :label="body.russianName"
+            size="small"
+            text
             class="quick-pill"
             :class="{
               'sun-pill': body.id === SUN_DATA.id,
               active: selectedBody?.id === body.id
             }"
             @click="selectFromList(body)"
-          >
-            {{ body.russianName }}
-          </button>
+          />
           <span v-if="filteredBodies.length === 0" class="empty-results">
             Ничего не найдено
           </span>
@@ -192,33 +202,33 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="top-actions">
-        <button
-          type="button"
-          class="events-toggle-btn"
+        <Button
+          label="События"
+          icon="pi pi-calendar"
+          size="small"
+          severity="secondary"
+          class="events-toggle-btn glass-panel"
           :class="{ active: isPlannerOpen }"
           title="Планетарные события"
           @click="togglePlanner"
-        >
-          <span class="icon">🪐</span>
-          <span>События</span>
-        </button>
+        />
 
-        <button
+        <Button
           v-if="selectedBody"
-          type="button"
+          label="Общий вид"
+          icon="pi pi-compass"
+          size="small"
+          severity="info"
           class="reset-view-btn"
           @click="resetView"
-        >
-          <span class="icon">⌖</span>
-          <span>Общий вид</span>
-        </button>
+        />
       </div>
     </header>
 
     <!-- Interactive Tooltip (Raycasting Hover) -->
     <div
       v-if="tooltipData.visible"
-      class="celestial-tooltip"
+      class="celestial-tooltip glass-panel"
       :style="{ left: `${tooltipData.x + 14}px`, top: `${tooltipData.y + 14}px` }"
     >
       <span class="tooltip-ru">{{ tooltipData.russianName }}</span>
@@ -258,7 +268,7 @@ onBeforeUnmount(() => {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: #05070f;
+  background-color: var(--space-bg-darkest);
 }
 
 .canvas-container {
@@ -275,7 +285,7 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--spacing-md);
   pointer-events: none;
   z-index: 10;
 }
@@ -284,22 +294,17 @@ onBeforeUnmount(() => {
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   padding: 8px 16px;
-  background: rgba(13, 20, 36, 0.78);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(80, 140, 240, 0.35);
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-radius: var(--radius-lg);
 }
 
 .pulse-indicator {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #00ffcc;
-  box-shadow: 0 0 10px #00ffcc;
+  background-color: var(--space-accent-cyan);
+  box-shadow: 0 0 10px var(--space-accent-cyan);
   animation: pulse 2s infinite ease-in-out;
 }
 
@@ -315,11 +320,11 @@ onBeforeUnmount(() => {
 }
 
 .brand-title {
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 1.5px;
-  color: #c9d1d9;
+  color: var(--space-text-secondary);
 }
 
 .nav-container {
@@ -335,60 +340,54 @@ onBeforeUnmount(() => {
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background: rgba(13, 20, 36, 0.78);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(80, 140, 240, 0.3);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-box:focus-within {
-  border-color: rgba(0, 255, 204, 0.6);
-  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+  border-color: var(--space-accent-cyan-border) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.2) !important;
 }
 
 .search-icon {
-  font-size: 11px;
-  opacity: 0.7;
+  font-size: 13px;
+  color: var(--space-text-muted);
 }
 
 .search-input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #ffffff;
-  font-family: var(--mono, monospace);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--space-text-primary) !important;
+  font-family: var(--font-mono);
   font-size: 12px;
-  width: 140px;
+  width: 150px;
+  padding: 4px 6px;
   transition: width 0.2s ease;
 }
 
 .search-input:focus {
-  width: 180px;
+  width: 190px;
 }
 
 .search-input::placeholder {
-  color: #6e7681;
+  color: var(--space-text-disabled);
   font-size: 11px;
 }
 
 .clear-search-btn {
-  background: transparent;
-  border: none;
-  color: #8b949e;
-  font-size: 11px;
-  cursor: pointer;
-  padding: 0 2px;
-  line-height: 1;
+  width: 22px !important;
+  height: 22px !important;
+  padding: 0 !important;
+  color: var(--space-text-muted) !important;
 }
 
 .clear-search-btn:hover {
-  color: #ffffff;
+  color: var(--space-text-primary) !important;
 }
 
 .empty-results {
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 11.5px;
   color: #ff6b6b;
   padding: 4px 8px;
@@ -399,45 +398,37 @@ onBeforeUnmount(() => {
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: rgba(13, 20, 36, 0.78);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(80, 140, 240, 0.3);
-  border-radius: 12px;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--radius-lg);
   overflow-x: auto;
   max-width: 100%;
 }
 
 .quick-pill {
-  padding: 4px 10px;
-  font-size: 11.5px;
-  font-family: var(--mono, monospace);
-  color: #8b949e;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  cursor: pointer;
+  padding: 4px 8px !important;
+  font-size: 11.5px !important;
+  font-family: var(--font-mono);
+  color: var(--space-text-muted) !important;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
 
 .quick-pill:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--space-text-primary) !important;
+  background: var(--space-surface-subtle-hover) !important;
 }
 
 .quick-pill.active {
-  color: #00ffcc;
-  background: rgba(0, 255, 204, 0.12);
-  border-color: rgba(0, 255, 204, 0.4);
+  color: var(--space-accent-cyan) !important;
+  background: var(--space-accent-cyan-bg) !important;
+  border: 1px solid var(--space-accent-cyan-border) !important;
 }
 
 .sun-pill.active {
-  color: #ffaa00;
-  background: rgba(255, 170, 0, 0.15);
-  border-color: rgba(255, 170, 0, 0.5);
+  color: var(--space-accent-gold) !important;
+  background: rgba(255, 170, 0, 0.15) !important;
+  border-color: rgba(255, 170, 0, 0.5) !important;
 }
 
 .top-actions {
@@ -448,54 +439,21 @@ onBeforeUnmount(() => {
 }
 
 .events-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: rgba(13, 20, 36, 0.78);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(80, 140, 240, 0.35);
-  border-radius: 10px;
-  color: #c9d1d9;
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 12px;
-  cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.events-toggle-btn:hover {
-  background: rgba(20, 35, 65, 0.9);
-  border-color: rgba(0, 255, 204, 0.6);
-  color: #00ffcc;
 }
 
 .events-toggle-btn.active {
-  background: rgba(0, 255, 204, 0.15);
-  border-color: #00ffcc;
-  color: #00ffcc;
-  box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
+  background: var(--space-accent-cyan-bg) !important;
+  border-color: var(--space-accent-cyan) !important;
+  color: var(--space-accent-cyan) !important;
+  box-shadow: var(--space-shadow-accent) !important;
 }
 
 .reset-view-btn {
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: rgba(20, 35, 65, 0.8);
-  border: 1px solid rgba(0, 255, 204, 0.4);
-  border-radius: 10px;
-  color: #00ffcc;
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.reset-view-btn:hover {
-  background: rgba(30, 50, 95, 0.9);
-  box-shadow: 0 0 12px rgba(0, 255, 204, 0.3);
 }
 
 /* Tooltip */
@@ -506,26 +464,20 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 2px;
   padding: 6px 12px;
-  background: rgba(13, 20, 36, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 255, 204, 0.4);
-  border-radius: 8px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-sm);
   z-index: 100;
-  transform: translate(0, 0);
 }
 
 .tooltip-ru {
   font-size: 12px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--space-text-primary);
 }
 
 .tooltip-en {
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 10.5px;
-  color: #00ffcc;
+  color: var(--space-accent-cyan);
 }
 
 @media (max-width: 992px) {

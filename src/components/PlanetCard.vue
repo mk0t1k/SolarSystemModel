@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import Tag from 'primevue/tag'
 import type { CelestialBodyData } from '../data/celestialBodies'
 
 interface Props {
@@ -15,66 +18,79 @@ const emit = defineEmits<{
 
 <template>
   <Transition name="slide-card">
-    <div v-if="body" class="planet-card">
-      <div class="card-header">
-        <div class="header-titles">
-          <span class="badge">{{ body.typeName }}</span>
-          <h2 class="body-title">{{ body.russianName }}</h2>
-          <span class="body-latin">{{ body.name }}</span>
+    <Card v-if="body" class="planet-card glass-card">
+      <template #header>
+        <div class="card-header">
+          <div class="header-titles">
+            <Tag :value="body.typeName" severity="info" class="type-tag" />
+            <h2 class="body-title">{{ body.russianName }}</h2>
+            <span class="body-latin">{{ body.name }}</span>
+          </div>
+          <Button
+            icon="pi pi-times"
+            text
+            rounded
+            severity="secondary"
+            aria-label="Закрыть карточку"
+            size="small"
+            class="close-btn"
+            @click="emit('close')"
+          />
         </div>
-        <button
-          type="button"
-          class="close-btn"
-          aria-label="Закрыть карточку"
-          @click="emit('close')"
-        >
-          ✕
-        </button>
-      </div>
+      </template>
 
-      <div class="card-body">
-        <div class="params-grid">
-          <div class="param-item">
-            <span class="param-label">Радиус</span>
-            <span class="param-value">{{ body.realRadiusKm.toLocaleString('ru-RU') }} км</span>
+      <template #content>
+        <div class="card-content-wrap">
+          <div class="params-grid">
+            <div class="param-item">
+              <span class="param-label">Радиус</span>
+              <span class="param-value">{{ body.realRadiusKm.toLocaleString('ru-RU') }} км</span>
+            </div>
+
+            <div class="param-item">
+              <span class="param-label">Дистанция от Солнца</span>
+              <span class="param-value">
+                {{ body.realDistanceMillionKm > 0 ? `${body.realDistanceMillionKm} млн км` : 'Центр системы' }}
+              </span>
+            </div>
+
+            <div class="param-item">
+              <span class="param-label">Период обращения</span>
+              <span class="param-value">
+                {{ body.id === 'sun' ? '—' : `${body.orbitalPeriod} дн.` }}
+              </span>
+            </div>
+
+            <div class="param-item">
+              <span class="param-label">Масса</span>
+              <span class="param-value mass-value">{{ body.massKg }}</span>
+            </div>
           </div>
 
-          <div class="param-item">
-            <span class="param-label">Дистанция от Солнца</span>
-            <span class="param-value">
-              {{ body.realDistanceMillionKm > 0 ? `${body.realDistanceMillionKm} млн км` : 'Центр системы' }}
-            </span>
-          </div>
-
-          <div class="param-item">
-            <span class="param-label">Период обращения</span>
-            <span class="param-value">
-              {{ body.id === 'sun' ? '—' : `${body.orbitalPeriod} дн.` }}
-            </span>
-          </div>
-
-          <div class="param-item">
-            <span class="param-label">Масса</span>
-            <span class="param-value mass-value">{{ body.massKg }}</span>
+          <div class="facts-section">
+            <h3 class="facts-title">Интересные факты</h3>
+            <ul class="facts-list">
+              <li v-for="(fact, index) in body.interestingFacts" :key="index" class="fact-item">
+                {{ fact }}
+              </li>
+            </ul>
           </div>
         </div>
+      </template>
 
-        <div class="facts-section">
-          <h3 class="facts-title">Интересные факты</h3>
-          <ul class="facts-list">
-            <li v-for="(fact, index) in body.interestingFacts" :key="index" class="fact-item">
-              {{ fact }}
-            </li>
-          </ul>
+      <template #footer>
+        <div class="card-footer-wrap">
+          <Button
+            label="Сбросить вид системы"
+            icon="pi pi-compass"
+            severity="info"
+            outlined
+            class="reset-btn"
+            @click="emit('resetView')"
+          />
         </div>
-      </div>
-
-      <div class="card-footer">
-        <button type="button" class="action-btn" @click="emit('resetView')">
-          <span>Сбросить вид системы</span>
-        </button>
-      </div>
-    </div>
+      </template>
+    </Card>
   </Transition>
 </template>
 
@@ -86,43 +102,36 @@ const emit = defineEmits<{
   width: 360px;
   max-width: calc(100vw - 40px);
   max-height: calc(100vh - 40px);
-  display: flex;
-  flex-direction: column;
-  background: rgba(13, 20, 36, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(80, 140, 240, 0.35);
-  border-radius: 16px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 24px rgba(60, 120, 220, 0.15);
-  color: #e6edf3;
+  border-radius: var(--radius-xl);
   z-index: 20;
   overflow: hidden;
   user-select: none;
+}
+
+:deep(.p-card-body) {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 18px 20px 14px;
-  border-bottom: 1px solid rgba(80, 140, 240, 0.18);
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+  border-bottom: 1px solid var(--space-surface-panel-border);
 }
 
 .header-titles {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
-.badge {
-  display: inline-block;
+.type-tag {
   align-self: flex-start;
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 11px;
-  color: #00ffcc;
-  background: rgba(0, 255, 204, 0.1);
-  padding: 3px 8px;
-  border-radius: 6px;
   letter-spacing: 0.5px;
 }
 
@@ -131,37 +140,30 @@ const emit = defineEmits<{
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  color: #ffffff;
+  color: var(--space-text-primary);
 }
 
 .body-latin {
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: #8b949e;
+  color: var(--space-text-muted);
 }
 
 .close-btn {
-  background: transparent;
-  border: none;
-  color: #8b949e;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  color: var(--space-text-muted) !important;
 }
 
 .close-btn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--space-text-primary) !important;
 }
 
-.card-body {
-  padding: 16px 20px;
+.card-content-wrap {
+  padding: var(--spacing-md) var(--spacing-lg);
   overflow-y: auto;
+  max-height: calc(100vh - 220px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .params-grid {
@@ -174,22 +176,22 @@ const emit = defineEmits<{
   display: flex;
   flex-direction: column;
   gap: 3px;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--space-surface-subtle);
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .param-label {
   font-size: 11px;
-  color: #8b949e;
+  color: var(--space-text-muted);
 }
 
 .param-value {
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
-  color: #58a6ff;
+  color: var(--space-accent-blue);
 }
 
 .mass-value {
@@ -200,7 +202,7 @@ const emit = defineEmits<{
 .facts-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .facts-title {
@@ -208,7 +210,8 @@ const emit = defineEmits<{
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #c9d1d9;
+  color: var(--space-text-secondary);
+  margin: 0;
 }
 
 .facts-list {
@@ -217,14 +220,14 @@ const emit = defineEmits<{
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .fact-item {
   position: relative;
   font-size: 12.5px;
   line-height: 1.45;
-  color: #c9d1d9;
+  color: var(--space-text-secondary);
   padding-left: 14px;
 }
 
@@ -232,31 +235,18 @@ const emit = defineEmits<{
   content: '•';
   position: absolute;
   left: 2px;
-  color: #00ffcc;
+  color: var(--space-accent-cyan);
 }
 
-.card-footer {
-  padding: 14px 20px;
-  border-top: 1px solid rgba(80, 140, 240, 0.18);
+.card-footer-wrap {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid var(--space-surface-panel-border);
 }
 
-.action-btn {
+.reset-btn {
   width: 100%;
-  padding: 9px 14px;
-  background: rgba(30, 60, 120, 0.45);
-  border: 1px solid rgba(88, 166, 255, 0.4);
-  border-radius: 8px;
-  color: #ffffff;
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
   font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.action-btn:hover {
-  background: rgba(40, 90, 180, 0.6);
-  border-color: #00ffcc;
-  box-shadow: 0 0 12px rgba(0, 255, 204, 0.25);
 }
 
 /* Glassmorphism Slide Transition */
