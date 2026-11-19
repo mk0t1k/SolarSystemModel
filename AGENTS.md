@@ -6,7 +6,7 @@
 
 ## 1. Навигация и Контракты
 - **Спецификация требований и фич:** `docs/requirements.md`
-- **Спецификация кастомных тел:** `spec/custom-bodies-ui.md`
+- **Спецификация планетарных событий:** `spec/planetary-events-ui.md`
 - **Перед изменением кода прочитай** `docs/style-guide.md`
 - **Команда полной валидации проекта:** `sh scripts/check.sh`
 - **Тестовый раннер:** `npm run test` (Vitest / Playwright)
@@ -34,7 +34,7 @@ solar-system/
 ├── docs/
 │   └── requirements.md         # Детальный контракт требований (Фичи А и Б)
 ├── spec/
-│   └── custom-bodies-ui.md     # Спецификация UI добавления и управления телами
+│   └── planetary-events-ui.md  # Спецификация UI поиска и визуализации планетарных событий
 ├── scripts/
 │   ├── check.sh                # Единый раннер проверок (типы, линт, билд, тесты)
 │   └── test_canvas.mjs         # E2E скрипт проверки инициализации WebGL
