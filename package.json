@@ -10,7 +10,7 @@
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.ts",
     "test": "vitest run",
-    "test:e2e": "echo 'E2E tests will run in Feature B'",
+    "test:e2e": "NO_PROXY=localhost,127.0.0.1 no_proxy=localhost,127.0.0.1 playwright test",
     "check": "sh scripts/check.sh"
   },
   "dependencies": {
@@ -22,13 +22,16 @@
     "vue": "^3.5.42"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@types/node": "^24.13.3",
     "@typescript-eslint/eslint-plugin": "^8.71.1",
     "@typescript-eslint/parser": "^8.71.1",
     "@vitejs/plugin-vue": "^6.0.8",
+    "@vue/test-utils": "^2.6.0",
     "@vue/tsconfig": "^0.9.1",
     "eslint": "^10.12.0",
     "eslint-plugin-vue": "^10.11.1",
+    "jsdom": "^31.0.1",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
     "vitest": "^5.0.3",
